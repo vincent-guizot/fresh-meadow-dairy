@@ -1,0 +1,104 @@
+/**
+ * Fresh Meadow Dairy - Tailwind CSS v4 Theme Bridge
+ * Connects Design System CSS Variables to Tailwind Utility Classes
+ */
+
+@theme {
+  /* Brand Color Utilities */
+  --color-dairy-blue: var(--fmd-blue-500);
+  --color-dairy-blue-dark: var(--fmd-blue-600);
+  --color-dairy-blue-light: var(--fmd-blue-100);
+
+  --color-meadow-green: var(--fmd-green-500);
+  --color-meadow-green-dark: var(--fmd-green-600);
+  --color-meadow-green-light: var(--fmd-green-50);
+
+  --color-deep-navy: var(--fmd-navy-700);
+  --color-deep-navy-light: var(--fmd-navy-500);
+
+  --color-creamy-milk: var(--fmd-cream-100);
+  --color-creamy-card: var(--fmd-cream-50);
+
+  --color-butter-yellow: var(--fmd-yellow-500);
+  --color-butter-yellow-light: var(--fmd-yellow-50);
+
+  --color-dairy-border: var(--fmd-cream-300);
+  --color-dairy-danger: var(--fmd-danger-500);
+  --color-dairy-danger-light: var(--fmd-danger-100);
+
+  /* Full Scale Mappings */
+  --color-fmd-blue-50: var(--fmd-blue-50);
+  --color-fmd-blue-100: var(--fmd-blue-100);
+  --color-fmd-blue-500: var(--fmd-blue-500);
+  --color-fmd-blue-600: var(--fmd-blue-600);
+
+  --color-fmd-green-50: var(--fmd-green-50);
+  --color-fmd-green-500: var(--fmd-green-500);
+  --color-fmd-green-600: var(--fmd-green-600);
+
+  --color-fmd-cream-50: var(--fmd-cream-50);
+  --color-fmd-cream-100: var(--fmd-cream-100);
+  --color-fmd-cream-300: var(--fmd-cream-300);
+
+  --color-fmd-navy-500: var(--fmd-navy-500);
+  --color-fmd-navy-700: var(--fmd-navy-700);
+
+  --color-fmd-yellow-50: var(--fmd-yellow-50);
+  --color-fmd-yellow-500: var(--fmd-yellow-500);
+
+  /* Fonts */
+  --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+
+  /* Shadows */
+  --shadow-dairy-card: var(--shadow-card);
+  --shadow-dairy-hover: var(--shadow-card-hover);
+  --shadow-dairy-modal: var(--shadow-modal);
+  --shadow-dairy-subtle: var(--shadow-subtle);
+
+  /* Radii */
+  --radius-dairy-sm: var(--radius-sm);
+  --radius-dairy-md: var(--radius-md);
+  --radius-dairy-lg: var(--radius-lg);
+  --radius-dairy-xl: var(--radius-xl);
+  --radius-dairy-2xl: var(--radius-2xl);
+
+  /* Custom Animations */
+  --animate-fadeIn: fadeIn 0.2s ease-out;
+  --animate-fade-in: fadeIn 0.2s ease-out;
+  --animate-slideUp: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slideRight: slideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-right: slideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes slideRight {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
