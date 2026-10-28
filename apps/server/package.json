@@ -1,8 +1,8 @@
 {
-  "name": "mixed-apps",
+  "name": "fresh-meadow-dairy-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Fresh Meadow Dairy RESTful API Server",
+  "main": "bin/www",
   "scripts": {
     "start": "nodemon bin/www",
     "create_migrate": "node bin/init-db.js",
@@ -25,7 +25,6 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.5.0",
     "pg": "^8.13.3",
-    "pug": "^3.0.4",
     "sequelize": "^6.37.8"
   },
   "devDependencies": {

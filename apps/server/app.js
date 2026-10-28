@@ -8,7 +8,6 @@ const router = require('./routes');
 const cors = require('cors');
 
 // Middlewares
-app.set('view engine', 'pug');
 app.use(express.static('public'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
