@@ -11,7 +11,7 @@ fresh-meadow-dairy/
 ├── apps/
 │   ├── cms/          # Dairy Administration & Inventory Portal (React 18 + Vite + Tailwind CSS v4)
 │   ├── server/       # Core RESTful API & Cold-Chain Management (Express.js + Sequelize + PostgreSQL)
-│   └── web-user/     # Direct-to-Consumer Organic Dairy Storefront (React 18 + Vite + Tailwind CSS v4)
+│   └── web-user/     # Customer-facing storefront (Reserved placeholder)
 ├── screenshots/      # UI design specifications & feature reference captures
 └── README.md
 ```
@@ -40,14 +40,8 @@ fresh-meadow-dairy/
 - **Authentication & Security:** JWT (JSON Web Tokens) with Bcrypt hashing and role-based ownership authorization
 - **Testing:** 100% passing automated test suite (`jest` & `supertest`) covering authentication and full Product CRUD lifecycle
 
-### 3. `apps/web-user` (Customer-Facing E-Commerce Storefront)
-- **Framework:** React 18 with Vite
-- **Styling:** Tailwind CSS v4 featuring Fresh Meadow brand palette (`#2c5d3f` Forest Green, `#f9f6f0` Milk Cream, `#e6b15c` Golden Butter)
-- **Features:**
-  - Fresh dairy product catalog (Pasteurized Milks, Greek Yogurts, Cultured Butters, Artisanal Cheeses)
-  - Cold-chain temperature disclosures and fresh shelf-life indicators
-  - Interactive shopping cart with temperature-controlled packaging fee calculation
-  - Next-morning farm-fresh delivery scheduler and express checkout simulation
+### 3. `apps/web-user` (Customer-Facing Storefront - In Planning)
+- Direktori ini dipersiapkan untuk storefront konsumen di tahap pengembangan berikutnya (saat ini berisi dokumentasi dan spesifikasi awal).
 
 ---
 
@@ -86,14 +80,6 @@ cd apps/cms
 yarn install
 yarn dev
 # CMS runs on http://localhost:5173
-```
-
-### 4. Running the Web Storefront
-```bash
-cd apps/web-user
-yarn install
-yarn dev
-# Web Storefront runs on http://localhost:5174
 ```
 
 ---
