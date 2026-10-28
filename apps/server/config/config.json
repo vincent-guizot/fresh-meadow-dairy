@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "admin",
+    "database": "cms-fmd",
+    "host": "127.0.0.1",
+    "port": 1000,
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "admin",
+    "database": "cms_test",
+    "host": "127.0.0.1",
+    "port": 1000,
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "admin",
+    "database": "cms-fmd",
+    "host": "127.0.0.1",
+    "port": 1000,
+    "dialect": "postgres"
+  }
+}

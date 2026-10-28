@@ -1,0 +1,10 @@
+# Server ignore rules
+node_modules/
+uploads/
+.env
+.env.*
+!.env.example
+coverage/
+*.log
+npm-debug.log*
+.DS_Store
