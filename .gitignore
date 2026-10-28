@@ -6,8 +6,10 @@ apps/*/node_modules/
 # Production builds
 build/
 dist/
+.next/
 apps/*/build/
 apps/*/dist/
+apps/*/.next/
 
 # Environment variables
 .env

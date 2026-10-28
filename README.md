@@ -40,8 +40,19 @@ fresh-meadow-dairy/
 - **Authentication & Security:** JWT (JSON Web Tokens) with Bcrypt hashing and role-based ownership authorization
 - **Testing:** 100% passing automated test suite (`jest` & `supertest`) covering authentication and full Product CRUD lifecycle
 
-### 3. `apps/web-user` (Customer-Facing Storefront - In Planning)
-- Direktori ini dipersiapkan untuk storefront konsumen di tahap pengembangan berikutnya (saat ini berisi dokumentasi dan spesifikasi awal).
+### 3. `apps/web-user` (Customer-Facing E-Commerce Storefront)
+- **Framework:** Next.js 14 (App Router)
+- **Language:** JavaScript (`.js` / `.jsx`)
+- **Styling:** Tailwind CSS with custom dairy color themes (`brand`, `cream`, `butter`, `cold`)
+- **Headless UI Primitives:** Base UI (`@base-ui-components/react`) for accessible Dialog modals and Tabs
+- **State Management:** Zustand with client-side persistent basket storage
+- **Animations:** Framer Motion for smooth drawer slides, modal transitions, and micro-interactions
+- **HTTP Client:** Axios for backend communication (`http://localhost:1000/products`)
+- **Features:**
+  - Fresh dairy product catalog (Milk, Greek Yogurt, Farm Butter, Cheese, Heavy Cream)
+  - Interactive multi-tab product modal with nutritional facts & cold chain storage specs
+  - Slide-over basket drawer with automated cold-pack insulation fee calculation
+  - Morning delivery slot scheduler (06:00 - 08:00 AM) and simulated checkout
 
 ---
 
@@ -80,6 +91,14 @@ cd apps/cms
 yarn install
 yarn dev
 # CMS runs on http://localhost:5173
+```
+
+### 4. Running the Web Storefront (Next.js)
+```bash
+cd apps/web-user
+yarn install
+yarn dev
+# Web Storefront runs on http://localhost:3000
 ```
 
 ---
