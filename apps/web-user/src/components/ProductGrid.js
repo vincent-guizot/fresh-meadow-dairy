@@ -1,0 +1,133 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Filter, SlidersHorizontal, AlertCircle, RefreshCw } from 'lucide-react';
+import ProductCard from './ProductCard';
+import CategoryFilter from './CategoryFilter';
+import { fetchProducts } from '../services/api';
+import { useCartStore } from '../store/useCartStore';
+
+export default function ProductGrid() {
+  const { searchQuery, selectedCategory, sortBy, setSortBy } = useCartStore();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadCatalog = async () => {
+      setLoading(true);
+      const data = await fetchProducts();
+      if (isMounted) {
+        setProducts(data);
+        setLoading(false);
+      }
+    };
+    loadCatalog();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Filter products by category & search query
+  const filteredProducts = products.filter((p) => {
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      p.category.toLowerCase() === selectedCategory.toLowerCase();
+    const matchesSearch =
+      searchQuery === '' ||
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
+
+  // Sort products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === 'price-low') return a.price - b.price;
+    if (sortBy === 'price-high') return b.price - a.price;
+    if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
+    return 0; // featured default
+  });
+
+  return (
+    <section id="dairy-catalog" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      {/* Header & Filter Bar */}
+      <div className="space-y-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-brand-700 text-xs font-bold uppercase tracking-wider mb-1">
+              <span>Farm Fresh Harvest</span>
+              <span>•</span>
+              <span>Daily Chilled Batches</span>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-900 tracking-tight">
+              Our Dairy Selection
+            </h2>
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-gray-500 hidden sm:inline">Sort by:</span>
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none bg-white text-xs sm:text-sm font-semibold text-brand-900 border border-cream-300 rounded-xl px-4 py-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-brand-600 cursor-pointer shadow-xs"
+              >
+                <option value="featured">✨ Featured Selection</option>
+                <option value="price-low">💰 Price: Low to High</option>
+                <option value="price-high">💎 Price: High to Low</option>
+                <option value="rating">⭐ Customer Rating</option>
+              </select>
+              <SlidersHorizontal className="w-3.5 h-3.5 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+        </div>
+
+        {/* Category Pills Bar */}
+        <CategoryFilter />
+      </div>
+
+      {/* Grid Content */}
+      {loading ? (
+        /* Skeleton Grid */
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl border border-cream-200 p-4 space-y-4 animate-pulse"
+            >
+              <div className="w-full h-48 bg-cream-200/70 rounded-xl" />
+              <div className="h-4 bg-cream-200/70 rounded w-1/3" />
+              <div className="h-5 bg-cream-200/70 rounded w-3/4" />
+              <div className="h-8 bg-cream-200/70 rounded-xl w-full" />
+            </div>
+          ))}
+        </div>
+      ) : sortedProducts.length > 0 ? (
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          <AnimatePresence>
+            {sortedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </AnimatePresence>
+        </motion.div>
+      ) : (
+        /* Empty State */
+        <div className="bg-white rounded-3xl border border-cream-200 p-12 text-center max-w-md mx-auto space-y-4 shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-cream-200 flex items-center justify-center mx-auto text-brand-700">
+            <AlertCircle className="w-8 h-8" />
+          </div>
+          <h3 className="font-serif font-bold text-xl text-brand-900">No Dairy Items Found</h3>
+          <p className="text-sm text-gray-500">
+            We couldn’t find anything matching &quot;{searchQuery}&quot; in the selected category.
+          </p>
+        </div>
+      )}
+    </section>
+  );
+}
