@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./screenshots/main-logo.png" alt="Fresh Meadow Dairy Logo" width="260" />
+</p>
+
 # 🥛 Fresh Meadow Dairy Platform
 
 **Fresh Meadow Dairy** adalah platform manajemen peternakan susu terintegrasi dari hulu ke hilir (*farm-to-table*) sekaligus etalase toko digital langsung ke konsumen (*direct-to-consumer*). Platform ini menyatukan sistem operasional internal (Content Management System / CMS), server backend RESTful API berantai dingin (*cold-chain*), dan aplikasi toko daring (*e-commerce storefront*) bagi pelanggan.
@@ -67,11 +71,6 @@ fresh-meadow-dairy/
   * `fmd-navy` (`#17324D` deep navy typography)
   * `fmd-cream` (`#FAF7EF` canvas & `#FAF8F3` warm card)
   * `fmd-yellow` (`#F4C95D` butter gold accent)
-* **Arsitektur Folder Bersih (*Clean Architecture*):**
-  * `src/hooks/`: Custom hooks modular (`useProducts`, `useCustomerAuth`, `useCart`, `useMounted`).
-  * `src/services/`: Pemisahan service per domain bisnis (`apiClient`, `productService`, `authService`, `orderService`).
-  * `src/store/`: Manajemen state terpusat via Zustand dengan persistensi aman SSR (`useCartStore`, `useAuthStore`).
-  * `src/components/`: Komponen antarmuka atomik & modal dinamis (*lazy loaded* via `GlobalModals.js`).
 * **Fitur Utama:**
   * Header bernavigasi pastoral dengan sensor temperatur rantai dingin aktif (*2°C - 4°C Live Sensor*) & live search.
   * Hero section padang rumput bersertifikasi *100% Sapi Jersey Grass-Fed*.
