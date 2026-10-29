@@ -1,11 +1,7 @@
 import './globals.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import CartDrawer from '../components/CartDrawer';
-import ProductModal from '../components/ProductModal';
-import CheckoutModal from '../components/CheckoutModal';
-import AuthModal from '../components/AuthModal';
-import OrderHistoryModal from '../components/OrderHistoryModal';
+import GlobalModals from '../components/GlobalModals';
 
 export const metadata = {
   title: 'Fresh Meadow Dairy | Farm Fresh Cold-Chain Dairy Storefront',
@@ -32,12 +28,8 @@ export default function RootLayout({ children }) {
         <main className="flex-1">{children}</main>
         <Footer />
 
-        {/* Global Modals & Drawers */}
-        <CartDrawer />
-        <ProductModal />
-        <CheckoutModal />
-        <AuthModal />
-        <OrderHistoryModal />
+        {/* Client-only dynamically loaded modals & drawers */}
+        <GlobalModals />
       </body>
     </html>
   );

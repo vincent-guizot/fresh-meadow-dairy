@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+const fallbackStorage = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+};
+
 export const useAuthStore = create(
   persist(
     (set, get) => ({
@@ -50,7 +56,9 @@ export const useAuthStore = create(
     }),
     {
       name: 'fresh-meadow-customer-auth',
-      storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : null)),
+      storage: createJSONStorage(() =>
+        typeof window !== 'undefined' ? window.localStorage : fallbackStorage
+      ),
       partialize: (state) => ({
         user: state.user,
         token: state.token,

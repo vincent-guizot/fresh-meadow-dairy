@@ -2,6 +2,12 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { useAuthStore } from './useAuthStore';
 
+const fallbackStorage = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+};
+
 export const useCartStore = create(
   persist(
     (set, get) => ({
@@ -123,7 +129,9 @@ export const useCartStore = create(
     }),
     {
       name: 'fresh-meadow-cart-storage',
-      storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : null)),
+      storage: createJSONStorage(() =>
+        typeof window !== 'undefined' ? window.localStorage : fallbackStorage
+      ),
       partialize: (state) => ({
         items: state.items,
         isColdPackingSelected: state.isColdPackingSelected,
