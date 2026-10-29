@@ -16,22 +16,22 @@ import {
   X,
   Sparkles,
 } from 'lucide-react';
+import { useCart, useCustomerAuth, useMounted } from '../hooks';
 import { useCartStore } from '../store/useCartStore';
-import { useAuthStore } from '../store/useAuthStore';
 
 export default function Navbar() {
-  const { openCart, getTotalItems, searchQuery, setSearchQuery } = useCartStore();
-  const { user, isAuthenticated, logout, openAuthModal, openOrderHistoryModal } = useAuthStore();
+  const { openCart, totalItems } = useCart();
+  const { searchQuery, setSearchQuery } = useCartStore();
+  const { user, isAuthenticated, logout, openAuthModal, openOrderHistoryModal } = useCustomerAuth();
+  const isClient = useMounted();
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
 
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    setIsClient(true);
     const handleScroll = () => {
       setScrolled(window.scrollY > 15);
     };
@@ -50,7 +50,7 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const totalItems = isClient ? getTotalItems() : 0;
+  const badgeCount = isClient ? totalItems : 0;
   const displayName = user?.name || user?.username || (user?.email ? user.email.split('@')[0] : 'Pelanggan');
 
   return (
@@ -144,14 +144,14 @@ export default function Navbar() {
               <div className="relative">
                 <ShoppingBag className="w-4 h-4" />
                 <AnimatePresence>
-                  {totalItems > 0 && (
+                  {badgeCount > 0 && (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       exit={{ scale: 0 }}
                       className="absolute -top-2.5 -right-2.5 bg-fmd-yellow-500 text-fmd-navy-900 text-[10px] font-extrabold w-4.5 h-4.5 rounded-full flex items-center justify-center border-2 border-white shadow-xs"
                     >
-                      {totalItems}
+                      {badgeCount}
                     </motion.span>
                   )}
                 </AnimatePresence>

@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { X, CheckCircle2, ShieldCheck, MapPin, Truck, QrCode, CreditCard, Banknote, Sparkles } from 'lucide-react';
-import { useCartStore } from '../store/useCartStore';
-import { useAuthStore } from '../store/useAuthStore';
-import { createOrder } from '../services/api';
+import { useCart, useCustomerAuth } from '../hooks';
+import { createOrder } from '../services/orderService';
 
 export default function CheckoutModal() {
   const {
@@ -14,13 +13,13 @@ export default function CheckoutModal() {
     items,
     clearCart,
     deliverySlot,
-    getSubtotal,
-    getColdPackingFee,
-    getDeliveryFee,
-    getGrandTotal,
-  } = useCartStore();
+    grandTotal,
+    subtotal,
+    coldPackingFee,
+    deliveryFee,
+  } = useCart();
 
-  const { user, addOrder } = useAuthStore();
+  const { user, addOrder } = useCustomerAuth();
 
   const [form, setForm] = useState({
     name: '',
@@ -43,8 +42,6 @@ export default function CheckoutModal() {
       }));
     }
   }, [user]);
-
-  const grandTotal = getGrandTotal();
 
   const formatIDR = (val) =>
     new Intl.NumberFormat('id-ID', {

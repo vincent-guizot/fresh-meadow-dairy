@@ -15,42 +15,31 @@ import {
   Clock,
   Sparkles,
 } from 'lucide-react';
-import { useCartStore } from '../store/useCartStore';
-import { useAuthStore } from '../store/useAuthStore';
+import { useCart, useCustomerAuth, useMounted } from '../hooks';
 
 export default function CartDrawer() {
   const {
     items,
     isOpen,
     closeCart,
-    handleProceedToCheckout,
+    proceedToCheckout,
     removeItem,
     updateQuantity,
     isColdPackingSelected,
     toggleColdPacking,
     deliverySlot,
     setDeliverySlot,
-    getSubtotal,
-    getColdPackingFee,
-    getDeliveryFee,
-    getGrandTotal,
-    getTotalItems,
-  } = useCartStore();
+    subtotal,
+    coldPackingFee: coldFee,
+    deliveryFee,
+    grandTotal,
+    totalItems: totalCount,
+  } = useCart();
 
-  const { isAuthenticated } = useAuthStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const { isAuthenticated } = useCustomerAuth();
+  const mounted = useMounted();
 
   if (!mounted) return null;
-
-  const subtotal = getSubtotal();
-  const coldFee = getColdPackingFee();
-  const deliveryFee = getDeliveryFee();
-  const grandTotal = getGrandTotal();
-  const totalCount = getTotalItems();
 
   const formatIDR = (val) =>
     new Intl.NumberFormat('id-ID', {
@@ -292,7 +281,7 @@ export default function CartDrawer() {
 
                   {/* Checkout Button */}
                   <button
-                    onClick={handleProceedToCheckout}
+                    onClick={proceedToCheckout}
                     className="w-full py-3.5 rounded-2xl bg-fmd-blue-500 hover:bg-fmd-blue-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-fmd-blue-500/20 flex items-center justify-center gap-2 transition-colors"
                   >
                     <span>{isAuthenticated ? 'Lanjut ke Pengiriman & Checkout' : 'Masuk untuk Checkout'}</span>
