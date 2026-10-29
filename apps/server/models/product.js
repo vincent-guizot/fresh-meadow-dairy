@@ -5,6 +5,15 @@ module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     static associate(models) {
       Product.belongsTo(models.User);
+      if (models.Category) {
+        Product.belongsTo(models.Category, { foreignKey: 'CategoryId', as: 'categoryDetail' });
+      }
+      if (models.OrderItem) {
+        Product.hasMany(models.OrderItem, { foreignKey: 'ProductId' });
+      }
+      if (models.StockMovement) {
+        Product.hasMany(models.StockMovement, { foreignKey: 'ProductId' });
+      }
     }
   }
 
@@ -35,6 +44,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Product category is required'
         }
       }
+    },
+    CategoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
     price: {
       type: DataTypes.INTEGER,
