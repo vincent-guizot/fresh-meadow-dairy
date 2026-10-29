@@ -4,11 +4,10 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Dialog } from '@base-ui-components/react/dialog';
 import { X, Lock, Mail, User, ShieldCheck, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { useAuthStore } from '../store/useAuthStore';
-import { loginCustomer, registerCustomer } from '../services/api';
+import { useCustomerAuth } from '../hooks/useCustomerAuth';
 
 export default function AuthModal() {
-  const { isAuthModalOpen, closeAuthModal, authMode, setAuthMode, setAuth } = useAuthStore();
+  const { isAuthModalOpen, closeAuthModal, authMode, setAuthMode, login, register } = useCustomerAuth();
 
   const [form, setForm] = useState({
     username: '',
@@ -29,13 +28,7 @@ export default function AuthModal() {
     try {
       if (authMode === 'login') {
         const identifier = form.email || form.username;
-        const result = await loginCustomer(identifier, form.password);
-        const userData = result.user || {
-          id: result.id || 1,
-          username: form.username || form.email.split('@')[0],
-          email: form.email,
-        };
-        setAuth(userData, result.access_token);
+        await login(identifier, form.password);
         setSuccessMsg('Login berhasil! Selamat datang kembali.');
         setTimeout(() => {
           closeAuthModal();
@@ -44,13 +37,7 @@ export default function AuthModal() {
       } else {
         // Register flow
         const username = form.username || form.email.split('@')[0];
-        const result = await registerCustomer(username, form.email, form.password);
-        const userData = {
-          id: result.id || Date.now(),
-          username: result.username || username,
-          email: result.email || form.email,
-        };
-        setAuth(userData, result.access_token || `token-${Date.now()}`);
+        await register(username, form.email, form.password);
         setSuccessMsg('Pendaftaran akun berhasil!');
         setTimeout(() => {
           closeAuthModal();

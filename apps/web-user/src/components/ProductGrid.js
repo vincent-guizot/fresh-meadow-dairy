@@ -1,54 +1,20 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SlidersHorizontal, AlertCircle } from 'lucide-react';
 import ProductCard from './ProductCard';
 import CategoryFilter from './CategoryFilter';
-import { fetchProducts } from '../services/api';
-import { useCartStore } from '../store/useCartStore';
+import { useProducts } from '../hooks/useProducts';
 
 export default function ProductGrid() {
-  const { searchQuery, selectedCategory, sortBy, setSortBy } = useCartStore();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadCatalog = async () => {
-      setLoading(true);
-      const data = await fetchProducts();
-      if (isMounted) {
-        setProducts(data);
-        setLoading(false);
-      }
-    };
-    loadCatalog();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  // Filter products by category & search query
-  const filteredProducts = products.filter((p) => {
-    const matchesCategory =
-      selectedCategory === 'all' ||
-      p.category.toLowerCase() === selectedCategory.toLowerCase();
-    const matchesSearch =
-      searchQuery === '' ||
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
-
-  // Sort products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortBy === 'price-low') return a.price - b.price;
-    if (sortBy === 'price-high') return b.price - a.price;
-    if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
-    return 0; // featured default
-  });
+  const {
+    filteredProducts,
+    loading,
+    sortBy,
+    setSortBy,
+    searchQuery,
+  } = useProducts();
 
   return (
     <section id="dairy-catalog" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -105,13 +71,13 @@ export default function ProductGrid() {
             </div>
           ))}
         </div>
-      ) : sortedProducts.length > 0 ? (
+      ) : filteredProducts.length > 0 ? (
         <motion.div
           layout
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           <AnimatePresence>
-            {sortedProducts.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </AnimatePresence>
