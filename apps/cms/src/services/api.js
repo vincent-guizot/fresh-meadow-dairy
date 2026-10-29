@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3120";
+const API_BASE_URL = import.meta.env?.VITE_API_URL || process.env.REACT_APP_API_URL || "http://localhost:3120";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -22,19 +22,9 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Optional: clear token on session expiry if not on login page
-      const currentPath = window.location.pathname;
-      if (currentPath !== "/login" && currentPath !== "/register") {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("user_info");
-      }
-    }
     return Promise.reject(error);
   },
 );
-
-// Normal async/await service functions
 
 // Authentication
 export const loginApi = async (credentials) => {
@@ -52,15 +42,81 @@ export const getMeApi = async () => {
   return response.data;
 };
 
-// Users
-export const getUsersApi = async () => {
-  const response = await apiClient.get("/users");
+// Users / Staff / Customers
+export const getUsersApi = async (params) => {
+  const response = await apiClient.get("/users", { params });
+  return response.data;
+};
+
+export const getCustomersApi = async (params) => {
+  const response = await apiClient.get("/customers", { params });
+  return response.data;
+};
+
+export const createCustomerApi = async (data) => {
+  const response = await apiClient.post("/users", { ...data, role: "customer" });
+  return response.data;
+};
+
+export const updateCustomerApi = async (id, data) => {
+  const response = await apiClient.put(`/users/${id}`, data);
+  return response.data;
+};
+
+export const deleteCustomerApi = async (id) => {
+  const response = await apiClient.delete(`/users/${id}`);
+  return response.data;
+};
+
+export const getStaffApi = async (params) => {
+  const response = await apiClient.get("/staff", { params });
+  return response.data;
+};
+
+export const createStaffApi = async (data) => {
+  const response = await apiClient.post("/users", { ...data, role: data.role || "staff" });
+  return response.data;
+};
+
+export const updateStaffApi = async (id, data) => {
+  const response = await apiClient.put(`/users/${id}`, data);
+  return response.data;
+};
+
+export const deleteStaffApi = async (id) => {
+  const response = await apiClient.delete(`/users/${id}`);
+  return response.data;
+};
+
+// Categories
+export const getCategoriesApi = async () => {
+  const response = await apiClient.get("/categories");
+  return response.data;
+};
+
+export const getCategoryByIdApi = async (id) => {
+  const response = await apiClient.get(`/categories/${id}`);
+  return response.data;
+};
+
+export const createCategoryApi = async (data) => {
+  const response = await apiClient.post("/categories", data);
+  return response.data;
+};
+
+export const updateCategoryApi = async (id, data) => {
+  const response = await apiClient.put(`/categories/${id}`, data);
+  return response.data;
+};
+
+export const deleteCategoryApi = async (id) => {
+  const response = await apiClient.delete(`/categories/${id}`);
   return response.data;
 };
 
 // Products
-export const getProductsApi = async () => {
-  const response = await apiClient.get("/products");
+export const getProductsApi = async (params) => {
+  const response = await apiClient.get("/products", { params });
   return response.data;
 };
 
@@ -95,6 +151,59 @@ export const updateProductApi = async (id, formDataOrData) => {
 
 export const deleteProductApi = async (id) => {
   const response = await apiClient.delete(`/products/${id}`);
+  return response.data;
+};
+
+// Orders & Status Confirmation
+export const getOrdersApi = async (params) => {
+  const response = await apiClient.get("/orders", { params });
+  return response.data;
+};
+
+export const getOrderByIdApi = async (id) => {
+  const response = await apiClient.get(`/orders/${id}`);
+  return response.data;
+};
+
+export const createOrderApi = async (data) => {
+  const response = await apiClient.post("/orders", data);
+  return response.data;
+};
+
+export const updateOrderStatusApi = async (id, status, note) => {
+  const response = await apiClient.patch(`/orders/${id}/status`, { status, note });
+  return response.data;
+};
+
+export const approveOrderApi = async (id) => {
+  const response = await apiClient.patch(`/orders/${id}/approve`);
+  return response.data;
+};
+
+export const deleteOrderApi = async (id) => {
+  const response = await apiClient.delete(`/orders/${id}`);
+  return response.data;
+};
+
+// Inventory & Stock
+export const getInventoryApi = async () => {
+  const response = await apiClient.get("/inventory");
+  return response.data;
+};
+
+export const getStockMovementsApi = async () => {
+  const response = await apiClient.get("/inventory/movements");
+  return response.data;
+};
+
+export const recordStockApi = async (data) => {
+  const response = await apiClient.post("/inventory/record", data);
+  return response.data;
+};
+
+// Overview / Analytics
+export const getOverviewStatsApi = async () => {
+  const response = await apiClient.get("/overview/stats");
   return response.data;
 };
 
