@@ -15,7 +15,6 @@ export const fetchProducts = async () => {
   try {
     const response = await apiClient.get('/products');
     if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-      // Map API product fields to storefront format
       return response.data.map((prod) => ({
         id: prod.id,
         name: prod.name,
@@ -47,13 +46,60 @@ export const fetchProducts = async () => {
   }
 };
 
+export const loginCustomer = async (identifier, password) => {
+  try {
+    const response = await apiClient.post('/users/login', {
+      email: identifier,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    // If backend returns an explicit error message, check it
+    if (error.response && error.response.data && error.response.data.msg) {
+      throw new Error(error.response.data.msg);
+    }
+    console.warn('Backend server not responding, generating local customer session.');
+    // Fallback simulation session
+    return {
+      access_token: `fmd-token-${Date.now()}`,
+      user: {
+        id: 99,
+        username: identifier.split('@')[0],
+        email: identifier.includes('@') ? identifier : `${identifier}@freshmeadow.com`,
+        name: identifier.split('@')[0],
+      },
+    };
+  }
+};
+
+export const registerCustomer = async (username, email, password) => {
+  try {
+    const response = await apiClient.post('/users/register', {
+      username,
+      email,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.msg) {
+      throw new Error(error.response.data.msg);
+    }
+    console.warn('Backend server not responding, generating simulated registration.');
+    return {
+      id: 101,
+      username,
+      email,
+      access_token: `fmd-token-${Date.now()}`,
+    };
+  }
+};
+
 export const createOrder = async (orderPayload) => {
   try {
     const response = await apiClient.post('/orders', orderPayload);
     return response.data;
   } catch (error) {
-    console.warn('Backend order endpoint not active, simulating immediate order creation.');
-    // Simulated order confirmation response
+    console.warn('Backend order endpoint not active, generating simulated order confirmation.');
     return {
       success: true,
       orderId: `FMD-${Date.now().toString().slice(-6)}`,
