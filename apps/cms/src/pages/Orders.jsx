@@ -254,13 +254,28 @@ export default function Orders() {
                       <StatusBadge status={order.status} size="sm" />
                     </td>
                     <td className="py-3.5 px-6 text-right" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={() => handleOpenDetail(order)}
-                        className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600"
-                        title="View Order Details"
-                      >
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        {canManageOrders && (order.status === 'Pending' || order.status === 'New') && (
+                          <button
+                            onClick={() => {
+                              setSelectedOrder(order);
+                              setPendingStatusChange('Confirmed');
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold inline-flex items-center gap-1 shadow-xs transition-colors"
+                            title="Setujui Pembelian"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" />
+                            <span>Setujui</span>
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleOpenDetail(order)}
+                          className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600"
+                          title="View Order Details"
+                        >
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -379,40 +394,69 @@ export default function Orders() {
 
               {/* Status Update Actions */}
               {canManageOrders && (
-                <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100">
-                  <span className="font-bold text-[#17324D] block mb-2">Update Order Status</span>
-                  <div className="flex flex-wrap gap-2">
+                <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#17324D] block text-xs sm:text-sm">
+                      Alur Status & Persetujuan Admin
+                    </span>
+                    <span className="text-[11px] text-slate-500">
+                      Status Saat Ini: <span className="font-bold text-[#2563A6]">{selectedOrder.status}</span>
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* 1. Setujui Pembelian */}
                     <button
                       type="button"
-                      onClick={() => setPendingStatusChange('Processing')}
-                      disabled={selectedOrder.status === 'Processing'}
-                      className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold disabled:opacity-40"
+                      onClick={() => setPendingStatusChange('Confirmed')}
+                      disabled={selectedOrder.status === 'Confirmed' || selectedOrder.status === 'Preparing' || selectedOrder.status === 'Shipped' || selectedOrder.status === 'Delivered'}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1.5"
                     >
-                      Mark as Processing
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      <span>Setujui Pembelian</span>
                     </button>
+
+                    {/* 2. Siapkan Pesanan */}
+                    <button
+                      type="button"
+                      onClick={() => setPendingStatusChange('Preparing')}
+                      disabled={selectedOrder.status === 'Preparing' || selectedOrder.status === 'Shipped' || selectedOrder.status === 'Delivered'}
+                      className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1.5"
+                    >
+                      <Package className="w-3.5 h-3.5" />
+                      <span>Sedang Disiapkan</span>
+                    </button>
+
+                    {/* 3. Diantar / Dikirim */}
                     <button
                       type="button"
                       onClick={() => setPendingStatusChange('Shipped')}
-                      disabled={selectedOrder.status === 'Shipped'}
-                      className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold disabled:opacity-40"
+                      disabled={selectedOrder.status === 'Shipped' || selectedOrder.status === 'Delivered'}
+                      className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1.5"
                     >
-                      Dispatch / Shipped
+                      <Truck className="w-3.5 h-3.5" />
+                      <span>Sedang Diantar</span>
                     </button>
+
+                    {/* 4. Selesai / Terkirim */}
                     <button
                       type="button"
                       onClick={() => setPendingStatusChange('Delivered')}
                       disabled={selectedOrder.status === 'Delivered'}
-                      className="px-3 py-1.5 rounded-xl bg-[#2E945A] text-white hover:bg-[#227244] font-semibold disabled:opacity-40"
+                      className="px-3 py-1.5 rounded-xl bg-[#2E945A] hover:bg-[#227244] text-white font-bold shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1.5"
                     >
-                      Mark as Delivered
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      <span>Sudah Diterima / Selesai</span>
                     </button>
+
+                    {/* 5. Batalkan */}
                     <button
                       type="button"
                       onClick={() => setPendingStatusChange('Cancelled')}
-                      disabled={selectedOrder.status === 'Cancelled'}
-                      className="px-3 py-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-semibold disabled:opacity-40 ml-auto"
+                      disabled={selectedOrder.status === 'Cancelled' || selectedOrder.status === 'Delivered'}
+                      className="px-3 py-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors ml-auto"
                     >
-                      Cancel Order
+                      Batalkan Pesanan
                     </button>
                   </div>
                 </div>
