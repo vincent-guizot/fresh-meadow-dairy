@@ -84,7 +84,7 @@ export default function Sidebar() {
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full max-h-screen bg-[#FAF8F3] border-r border-[#EBE5D8] w-52 select-none relative overflow-hidden">
+    <div className="flex flex-col h-full max-h-screen bg-[#FAF8F3] border-r border-[#EBE5D8] w-56 md:w-60 select-none relative overflow-hidden">
       {/* Brand Header with Centered Logo */}
       <div className="shrink-0 pt-4 pb-3 px-3 flex items-center justify-center relative">
         <NavLink
@@ -113,7 +113,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation List - Fixed Height with Independent Scroll on Overflow */}
-      <nav className="flex-1 min-h-0 px-2.5 py-1.5 space-y-1 overflow-y-auto">
+      <nav className="flex-1 min-h-0 px-3 py-1.5 space-y-1.5 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -127,14 +127,14 @@ export default function Sidebar() {
               key={item.to}
               to={item.to}
               onClick={handleLinkClick}
-              className={`flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
+              className={`flex items-center space-x-3 px-3.5 py-2.5 rounded-full text-sm font-semibold transition-all duration-150 ${
                 isActive
-                  ? "bg-[#2563A6] text-white shadow-sm shadow-blue-600/20"
-                  : "text-[#17324D] hover:bg-[#F2ECE0] text-opacity-90 hover:text-opacity-100"
+                  ? "bg-[#1F62AC] text-white shadow-sm shadow-blue-700/20"
+                  : "text-[#163654] hover:bg-[#F2ECE0] text-opacity-95 hover:text-opacity-100"
               }`}
             >
               <Icon
-                className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-[#17324D]"}`}
+                className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-[#163654]"}`}
               />
               <span className="truncate">{item.label}</span>
             </NavLink>
