@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SlidersHorizontal, AlertCircle } from 'lucide-react';
+import { SlidersHorizontal, AlertCircle, Search, X } from 'lucide-react';
 import ProductCard from './ProductCard';
 import CategoryFilter from './CategoryFilter';
 import { useProducts } from '../hooks/useProducts';
@@ -14,6 +14,7 @@ export default function ProductGrid() {
     sortBy,
     setSortBy,
     searchQuery,
+    clearSearch,
   } = useProducts();
 
   return (
@@ -53,6 +54,25 @@ export default function ProductGrid() {
 
         {/* Category Pills Bar */}
         <CategoryFilter />
+
+        {/* Active Search Filter Banner */}
+        {searchQuery && (
+          <div className="flex items-center justify-between flex-wrap gap-2 px-4 py-2.5 bg-fmd-blue-500/10 border border-fmd-blue-500/20 rounded-2xl">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-fmd-navy-700 font-medium">
+              <Search className="w-4 h-4 text-fmd-blue-500 shrink-0" />
+              <span>
+                Menampilkan hasil pencarian untuk <strong className="text-fmd-blue-600 font-bold">&quot;{searchQuery}&quot;</strong> ({filteredProducts.length} produk ditemukan)
+              </span>
+            </div>
+            <button
+              onClick={clearSearch}
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-fmd-navy-700 hover:text-red-600 bg-white hover:bg-red-50 border border-fmd-cream-300 rounded-xl transition shadow-2xs"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Hapus Pencarian</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Grid Content */}
@@ -90,8 +110,18 @@ export default function ProductGrid() {
           </div>
           <h3 className="font-serif font-bold text-xl text-fmd-navy-700">Produk Tidak Ditemukan</h3>
           <p className="text-xs text-gray-500">
-            Tidak ada produk yang cocok dengan kata kunci &quot;{searchQuery}&quot; pada kategori yang dipilih.
+            {searchQuery
+              ? `Tidak ada produk yang cocok dengan kata kunci "${searchQuery}".`
+              : 'Tidak ada produk pada kategori ini saat ini.'}
           </p>
+          {searchQuery && (
+            <button
+              onClick={clearSearch}
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-fmd-blue-500 hover:bg-fmd-blue-600 rounded-xl transition shadow-xs"
+            >
+              Lihat Semua Produk
+            </button>
+          )}
         </div>
       )}
     </section>

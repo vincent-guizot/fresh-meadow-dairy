@@ -50,6 +50,14 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const el = document.getElementById('dairy-catalog');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const badgeCount = isClient ? totalItems : 0;
   const displayName = user?.name || user?.username || (user?.email ? user.email.split('@')[0] : 'Pelanggan');
 
@@ -84,7 +92,7 @@ export default function Navbar() {
           {/* Brand Logo */}
           <div className="flex items-center gap-3">
             <a href="#" className="flex items-center gap-3 group">
-              <div className="w-11 h-11 rounded-2xl bg-fmd-blue-500 flex items-center justify-center shadow-md shadow-fmd-blue-500/20 group-hover:scale-105 transition-transform overflow-hidden relative p-1.5">
+              <div className="w-11 h-11 rounded-2xl bg-white border border-fmd-cream-300 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform overflow-hidden relative p-1.5">
                 <Image
                   src="/assets/logo.png"
                   alt="Fresh Meadow Dairy"
@@ -106,7 +114,7 @@ export default function Navbar() {
 
           {/* Search Bar (Desktop) */}
           <div className="hidden md:flex flex-1 max-w-md mx-4">
-            <div className="relative w-full">
+            <form onSubmit={handleSearchSubmit} className="relative w-full">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-fmd-blue-500/60" />
               <input
                 type="text"
@@ -117,13 +125,14 @@ export default function Navbar() {
               />
               {searchQuery && (
                 <button
+                  type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600"
                 >
                   Clear
                 </button>
               )}
-            </div>
+            </form>
           </div>
 
           {/* Quick Actions: Cold Pill, Cart, User Auth */}
@@ -227,7 +236,7 @@ export default function Navbar() {
         {/* Mobile Search & Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden py-3 border-t border-fmd-cream-200 space-y-3">
-            <div className="relative w-full">
+            <form onSubmit={handleSearchSubmit} className="relative w-full">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-fmd-blue-500/60" />
               <input
                 type="text"
@@ -236,7 +245,7 @@ export default function Navbar() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 text-xs bg-white rounded-xl border border-fmd-cream-300 focus:outline-none focus:ring-2 focus:ring-fmd-blue-500"
               />
-            </div>
+            </form>
             <div className="flex items-center justify-between text-xs font-semibold text-fmd-green-600 px-1">
               <span>Suhu Dingin: 2°C - 4°C Terjamin</span>
               <span>Pengantaran: Esok 06:00 AM</span>

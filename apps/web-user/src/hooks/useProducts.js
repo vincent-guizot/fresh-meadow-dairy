@@ -9,7 +9,7 @@ import { useCartStore } from '../store/useCartStore';
  * category filtering, keyword searching, and sorting.
  */
 export function useProducts() {
-  const { searchQuery, selectedCategory, sortBy, setSortBy } = useCartStore();
+  const { searchQuery, setSearchQuery, selectedCategory, setSelectedCategory, sortBy, setSortBy } = useCartStore();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,17 +33,27 @@ export function useProducts() {
 
   // Filter products by category & live search
   const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      const matchesCategory =
-        selectedCategory === 'all' ||
-        p.category.toLowerCase() === selectedCategory.toLowerCase();
+    const q = (searchQuery || '').toLowerCase().trim();
 
-      const q = searchQuery.toLowerCase().trim();
+    return products.filter((p) => {
+      const prodCategory = (p.category || '').toLowerCase();
+      const prodName = (p.name || '').toLowerCase();
+      const prodDesc = (p.description || '').toLowerCase();
+
+      // Check if item matches search query
       const matchesSearch =
         q === '' ||
-        p.name.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        (p.description && p.description.toLowerCase().includes(q));
+        prodName.includes(q) ||
+        prodCategory.includes(q) ||
+        prodDesc.includes(q);
+
+      // Category matching:
+      // If user typed a search query, search broadly across the whole catalog.
+      // If no search query, filter strictly by selectedCategory.
+      const matchesCategory =
+        q !== '' ||
+        selectedCategory === 'all' ||
+        prodCategory === selectedCategory.toLowerCase();
 
       return matchesCategory && matchesSearch;
     });
@@ -58,6 +68,10 @@ export function useProducts() {
     return list; // default featured
   }, [filteredProducts, sortBy]);
 
+  const clearSearch = useCallback(() => {
+    setSearchQuery('');
+  }, [setSearchQuery]);
+
   return {
     products,
     filteredProducts: sortedProducts,
@@ -68,7 +82,10 @@ export function useProducts() {
     sortBy,
     setSortBy,
     selectedCategory,
+    setSelectedCategory,
     searchQuery,
+    setSearchQuery,
+    clearSearch,
   };
 }
 
