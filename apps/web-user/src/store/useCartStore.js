@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useAuthStore } from './useAuthStore';
 
 export const useCartStore = create(
   persist(
@@ -9,7 +10,7 @@ export const useCartStore = create(
       isCheckoutOpen: false,
       selectedProduct: null, // For product quick-view modal
       isColdPackingSelected: true,
-      deliverySlot: 'morning', // 'morning' | 'afternoon'
+      deliverySlot: 'morning', // 'morning' (06:00 - 08:00 AM) | 'afternoon' (03:00 - 05:00 PM)
       searchQuery: '',
       selectedCategory: 'all',
       sortBy: 'featured',
@@ -18,6 +19,18 @@ export const useCartStore = create(
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
+
+      // Proceed to Checkout with Auth Guard
+      handleProceedToCheckout: () => {
+        const isAuth = useAuthStore.getState().isAuthenticated;
+        if (!isAuth) {
+          // Close cart and prompt Login/Register modal first
+          set({ isOpen: false });
+          useAuthStore.getState().openAuthModal('login');
+        } else {
+          set({ isCheckoutOpen: true, isOpen: false });
+        }
+      },
 
       openCheckout: () => set({ isCheckoutOpen: true, isOpen: false }),
       closeCheckout: () => set({ isCheckoutOpen: false }),
