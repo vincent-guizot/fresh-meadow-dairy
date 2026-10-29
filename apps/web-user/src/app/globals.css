@@ -4,10 +4,12 @@
 
 @layer base {
   :root {
-    --brand-primary: #2c5d3f;
-    --brand-dark: #1b3b28;
-    --brand-cream: #f9f6f0;
-    --brand-butter: #e6b15c;
+    --fmd-blue-500: #2563A6;
+    --fmd-blue-600: #1C4E86;
+    --fmd-green-500: #356B4B;
+    --fmd-navy-700: #17324D;
+    --fmd-cream-100: #FAF7EF;
+    --fmd-yellow-500: #F4C95D;
   }
 
   html {
@@ -16,9 +18,9 @@
   }
 
   body {
-    background-color: #f9f6f0;
-    color: #1f2937;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #FAF7EF;
+    color: #17324D;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
@@ -29,16 +31,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f3ece0;
+  background: #F5EFE1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #9bc6b0;
+  background: #A8CBF0;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4a7c59;
+  background: #2563A6;
 }
 
 /* Cold indicator pulse */
