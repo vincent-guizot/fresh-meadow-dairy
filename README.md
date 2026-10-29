@@ -82,7 +82,7 @@ yarn run db:seed:all
 ```bash
 cd apps/server
 yarn dev
-# Server runs on http://localhost:1000 (or configured PORT)
+# Server runs on http://localhost:3120
 ```
 
 ### 3. Running the CMS (Admin Portal)
@@ -90,7 +90,7 @@ yarn dev
 cd apps/cms
 yarn install
 yarn dev
-# CMS runs on http://localhost:5173
+# CMS runs on http://localhost:3125
 ```
 
 ### 4. Running the Web Storefront (Next.js)
@@ -98,7 +98,7 @@ yarn dev
 cd apps/web-user
 yarn install
 yarn dev
-# Web Storefront runs on http://localhost:3000
+# Web Storefront runs on http://localhost:3130
 ```
 
 ---

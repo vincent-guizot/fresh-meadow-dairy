@@ -9,7 +9,7 @@ The core backend service for Fresh Meadow Dairy. Built with Express.js and Seque
 - **Automated Testing:** Comprehensive Jest + Supertest suites with 100% test pass rate.
 
 ## 📦 Scripts
-- `yarn dev` / `yarn start` - Run local API development server with nodemon
+- `yarn dev` / `yarn start` - Run local API development server on `http://localhost:3120` with nodemon
 - `yarn test` - Run Jest test suite
 - `yarn run create_migrate` - Initialize database and run migrations
 - `yarn run migrate` - Apply pending migrations

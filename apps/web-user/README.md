@@ -9,7 +9,7 @@ A high-performance, customer-facing digital e-commerce storefront for Fresh Mead
 - **Component Primitives:** [Base UI](https://base-ui.com/) (`@base-ui-components/react`) for accessible headless Dialogs, Tabs, and interactive components
 - **State Management:** [Zustand](https://github.com/pmndrs/zustand) with client-side persistent cart storage
 - **Animations:** [Framer Motion](https://www.framer.com/motion/) for fluid page transitions, drawer slides, and micro-interactions
-- **HTTP Client:** [Axios](https://axios-http.com/) for communication with the Express.js API (`http://localhost:1000`)
+- **HTTP Client:** [Axios](https://axios-http.com/) for communication with the Express.js API (`http://localhost:3120`)
 
 ---
 
@@ -58,7 +58,7 @@ yarn install
 ### 2. Run Development Server
 ```bash
 yarn dev
-# Access the storefront at http://localhost:3000
+# Access the storefront at http://localhost:3130
 ```
 
 ### 3. Production Build & Start

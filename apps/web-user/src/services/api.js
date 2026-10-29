@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { INITIAL_PRODUCTS } from '../data/products';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3120';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

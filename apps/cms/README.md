@@ -10,6 +10,6 @@ An enterprise-grade administration portal for Fresh Meadow Dairy operations, inv
 - **Branded Authentication:** Split-screen login interface with pastoral background accents.
 
 ## 📦 Scripts
-- `yarn dev` - Start Vite development server
-- `yarn build` - Compile production bundle to `dist/`
-- `yarn preview` - Locally preview production build
+- `yarn dev` - Start Vite development server on `http://localhost:3125`
+- `yarn build` - Compile production bundle to `build/`
+- `yarn preview` - Locally preview production build on port 3125
