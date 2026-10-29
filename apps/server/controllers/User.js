@@ -1,26 +1,91 @@
 /**
- * Fresh Meadow Dairy CMS - User & Staff Controller
- * Handles user authentication, staff registration, and directory listing.
+ * Fresh Meadow Dairy CMS - User, Staff & Customer Controller
+ * Handles user authentication, staff/customer management, and directory listings.
  */
 
 const { User } = require('../models');
-const { decryptPwd } = require('../helpers/bcrypt');
+const { decryptPwd, encryptPwd } = require('../helpers/bcrypt');
 const { tokenGenerator } = require('../helpers/jwt');
 const { Op } = require('sequelize');
 
 class UserController {
     /**
      * GET /users
-     * Retrieve all registered staff/users (without password hash).
+     * Retrieve users, optionally filtered by role (e.g. ?role=customer or ?role=staff).
      */
     static async list(req, res, next) {
         try {
+            const { role, search } = req.query;
+            const where = {};
+
+            if (role) {
+                if (role.includes(',')) {
+                    where.role = { [Op.in]: role.split(',').map((r) => r.trim()) };
+                } else if (role === 'staff') {
+                    where.role = { [Op.in]: ['admin', 'staff'] };
+                } else {
+                    where.role = role;
+                }
+            }
+
+            if (search) {
+                where[Op.or] = [
+                    { username: { [Op.iLike]: `%${search}%` } },
+                    { email: { [Op.iLike]: `%${search}%` } },
+                    { name: { [Op.iLike]: `%${search}%` } }
+                ];
+            }
+
             const users = await User.findAll({
-                attributes: ['id', 'username', 'email', 'createdAt'],
+                where,
+                attributes: ['id', 'username', 'name', 'email', 'role', 'phoneNumber', 'address', 'avatar', 'status', 'createdAt'],
                 order: [['id', 'ASC']]
             });
 
-            return res.status(200).json(users);
+            // Map users with formatted fields for CMS
+            const formatted = users.map((u) => {
+                const plain = u.get({ plain: true });
+                return {
+                    ...plain,
+                    name: plain.name || plain.username,
+                    customer: plain.name || plain.username,
+                    phone: plain.phoneNumber || '+62 812-3456-7890',
+                    totalOrders: 4,
+                    totalSpent: 420000,
+                    status: plain.status === 'active' ? 'Active' : 'Inactive',
+                    joinedDate: new Date(plain.createdAt).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    })
+                };
+            });
+
+            return res.status(200).json(formatted);
+        } catch (err) {
+            return next(err);
+        }
+    }
+
+    /**
+     * GET /users/:id
+     */
+    static async getById(req, res, next) {
+        try {
+            const { id } = req.params;
+            const user = await User.findByPk(id, {
+                attributes: ['id', 'username', 'name', 'email', 'role', 'phoneNumber', 'address', 'avatar', 'status', 'createdAt']
+            });
+
+            if (!user) {
+                return next({
+                    name: 'NotFound',
+                    status: 404,
+                    msg: 'User not found'
+                });
+            }
+
+            return res.status(200).json(user);
         } catch (err) {
             return next(err);
         }
@@ -34,7 +99,7 @@ class UserController {
         try {
             const userId = req.userData && req.userData.id;
             const user = await User.findByPk(userId, {
-                attributes: ['id', 'username', 'email', 'createdAt']
+                attributes: ['id', 'username', 'name', 'email', 'role', 'phoneNumber', 'address', 'avatar', 'status', 'createdAt']
             });
 
             if (!user) {
@@ -57,10 +122,11 @@ class UserController {
      */
     static async login(req, res, next) {
         try {
-            const { username, password } = req.body;
+            const { username, password, email } = req.body;
+            const identifier = username || email;
 
             // Validate required inputs
-            if (!username || !password) {
+            if (!identifier || !password) {
                 return next({
                     name: 'Unauthorized',
                     status: 401,
@@ -72,8 +138,8 @@ class UserController {
             const user = await User.findOne({
                 where: {
                     [Op.or]: [
-                        { username: String(username).trim() },
-                        { email: String(username).trim().toLowerCase() }
+                        { username: String(identifier).trim() },
+                        { email: String(identifier).trim().toLowerCase() }
                     ]
                 }
             });
@@ -95,7 +161,12 @@ class UserController {
                 user: {
                     id: user.id,
                     username: user.username,
-                    email: user.email
+                    name: user.name || user.username,
+                    email: user.email,
+                    role: user.role,
+                    phoneNumber: user.phoneNumber,
+                    address: user.address,
+                    avatar: user.avatar
                 }
             });
         } catch (err) {
@@ -105,11 +176,11 @@ class UserController {
 
     /**
      * POST /users/register
-     * Create a new staff or admin user account.
+     * Create a new user account (defaults to customer, can be staff/admin if specified).
      */
     static async register(req, res, next) {
         try {
-            const { username, email, password } = req.body;
+            const { username, email, password, role, name, phoneNumber, address, avatar } = req.body;
 
             // Validate required fields
             if (!username || !email || !password) {
@@ -144,21 +215,107 @@ class UserController {
                 });
             }
 
-            // Create new user (password is automatically hashed by model hooks)
+            // Create new user
             const newUser = await User.create({
                 username: cleanUsername,
+                name: name || cleanUsername,
                 email: cleanEmail,
-                password
+                password,
+                role: role || 'customer',
+                phoneNumber: phoneNumber || null,
+                address: address || null,
+                avatar: avatar || null
             });
+
+            const access_token = tokenGenerator(newUser);
 
             return res.status(201).json({
                 msg: 'User registered successfully',
+                access_token,
                 user: {
                     id: newUser.id,
                     username: newUser.username,
-                    email: newUser.email
+                    name: newUser.name,
+                    email: newUser.email,
+                    role: newUser.role,
+                    phoneNumber: newUser.phoneNumber,
+                    address: newUser.address,
+                    avatar: newUser.avatar
                 }
             });
+        } catch (err) {
+            return next(err);
+        }
+    }
+
+    /**
+     * PUT /users/:id
+     */
+    static async update(req, res, next) {
+        try {
+            const { id } = req.params;
+            const user = await User.findByPk(id);
+            if (!user) {
+                return next({
+                    name: 'NotFound',
+                    status: 404,
+                    msg: 'User not found'
+                });
+            }
+
+            const { name, email, role, phoneNumber, address, avatar, status, password } = req.body;
+            const updatePayload = {
+                name: name !== undefined ? name : user.name,
+                email: email !== undefined ? String(email).trim().toLowerCase() : user.email,
+                role: role !== undefined ? role : user.role,
+                phoneNumber: phoneNumber !== undefined ? phoneNumber : user.phoneNumber,
+                address: address !== undefined ? address : user.address,
+                avatar: avatar !== undefined ? avatar : user.avatar,
+                status: status !== undefined ? status : user.status
+            };
+
+            if (password) {
+                updatePayload.password = encryptPwd(password);
+            }
+
+            await user.update(updatePayload);
+
+            return res.status(200).json({
+                msg: 'User updated successfully',
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    phoneNumber: user.phoneNumber,
+                    address: user.address,
+                    avatar: user.avatar,
+                    status: user.status
+                }
+            });
+        } catch (err) {
+            return next(err);
+        }
+    }
+
+    /**
+     * DELETE /users/:id
+     */
+    static async delete(req, res, next) {
+        try {
+            const { id } = req.params;
+            const user = await User.findByPk(id);
+            if (!user) {
+                return next({
+                    name: 'NotFound',
+                    status: 404,
+                    msg: 'User not found'
+                });
+            }
+
+            await user.destroy();
+            return res.status(200).json({ msg: 'User successfully deleted' });
         } catch (err) {
             return next(err);
         }
