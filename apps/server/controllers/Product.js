@@ -3,18 +3,27 @@
  * Handles dairy product catalog management, cold chain storage tracking, and CRUD operations.
  */
 
-const { Product, User } = require('../models');
+const { Product, User, Category } = require('../models');
 const { uploadToCloudinaryOrLocal } = require('../helpers/uploadImage');
+const { Op } = require('sequelize');
 
 class ProductController {
     /**
-     * Standard User association options for product queries
+     * Standard associations for product queries
      */
-    static get userAssociation() {
-        return {
-            model: User,
-            attributes: ['id', 'username', 'email']
-        };
+    static get defaultAssociations() {
+        return [
+            {
+                model: User,
+                attributes: ['id', 'username', 'email']
+            },
+            {
+                model: Category,
+                as: 'categoryDetail',
+                required: false,
+                attributes: ['id', 'name', 'slug', 'icon']
+            }
+        ];
     }
 
     /**
@@ -23,9 +32,26 @@ class ProductController {
      */
     static async getProduct(req, res, next) {
         try {
+            const { category, search } = req.query;
+            const where = {};
+
+            if (category && category !== 'all') {
+                where[Op.or] = [
+                    { category: { [Op.iLike]: `%${category}%` } }
+                ];
+            }
+
+            if (search) {
+                where[Op.or] = [
+                    { name: { [Op.iLike]: `%${search}%` } },
+                    { info: { [Op.iLike]: `%${search}%` } }
+                ];
+            }
+
             const products = await Product.findAll({
+                where,
                 order: [['id', 'ASC']],
-                include: [ProductController.userAssociation]
+                include: ProductController.defaultAssociations
             });
 
             return res.status(200).json(products);
@@ -42,7 +68,7 @@ class ProductController {
         try {
             const { id } = req.params;
             const product = await Product.findByPk(id, {
-                include: [ProductController.userAssociation]
+                include: ProductController.defaultAssociations
             });
 
             if (!product) {
@@ -69,6 +95,7 @@ class ProductController {
                 name,
                 info,
                 category,
+                CategoryId,
                 price,
                 stock,
                 volume,
@@ -92,10 +119,25 @@ class ProductController {
                 });
             }
 
+            // Resolve CategoryId
+            let catId = CategoryId ? Number(CategoryId) : null;
+            if (!catId && category) {
+                const found = await Category.findOne({
+                    where: {
+                        [Op.or]: [
+                            { name: { [Op.iLike]: category } },
+                            { slug: { [Op.iLike]: category.toLowerCase() } }
+                        ]
+                    }
+                });
+                if (found) catId = found.id;
+            }
+
             const product = await Product.create({
                 name,
                 info,
-                category,
+                category: category || 'Milk',
+                CategoryId: catId,
                 image: imageUrl,
                 price: Number(price),
                 stock: Number(stock),
@@ -105,7 +147,11 @@ class ProductController {
                 UserId
             });
 
-            return res.status(201).json(product);
+            const result = await Product.findByPk(product.id, {
+                include: ProductController.defaultAssociations
+            });
+
+            return res.status(201).json(result);
         } catch (err) {
             return next(err);
         }
@@ -122,6 +168,7 @@ class ProductController {
                 name,
                 info,
                 category,
+                CategoryId,
                 price,
                 stock,
                 volume,
@@ -129,7 +176,6 @@ class ProductController {
                 storageTemp
             } = req.body;
 
-            // Product instance pre-fetched by authorization middleware or fallback find
             const currentProduct = req.product || await Product.findByPk(id);
 
             if (!currentProduct) {
@@ -140,7 +186,6 @@ class ProductController {
                 });
             }
 
-            // Determine image URL
             let imageUrl = currentProduct.image;
             if (req.file) {
                 imageUrl = await uploadToCloudinaryOrLocal(req.file, req);
@@ -148,12 +193,25 @@ class ProductController {
                 imageUrl = req.body.image;
             }
 
-            // Perform partial / full update
+            let catId = CategoryId !== undefined ? Number(CategoryId) : currentProduct.CategoryId;
+            if (!catId && category) {
+                const found = await Category.findOne({
+                    where: {
+                        [Op.or]: [
+                            { name: { [Op.iLike]: category } },
+                            { slug: { [Op.iLike]: category.toLowerCase() } }
+                        ]
+                    }
+                });
+                if (found) catId = found.id;
+            }
+
             await Product.update(
                 {
                     name: name ?? currentProduct.name,
                     info: info ?? currentProduct.info,
                     category: category ?? currentProduct.category,
+                    CategoryId: catId,
                     image: imageUrl,
                     price: price !== undefined ? Number(price) : currentProduct.price,
                     stock: stock !== undefined ? Number(stock) : currentProduct.stock,
@@ -166,9 +224,8 @@ class ProductController {
                 }
             );
 
-            // Fetch refreshed product with owner association
             const updatedProduct = await Product.findByPk(id, {
-                include: [ProductController.userAssociation]
+                include: ProductController.defaultAssociations
             });
 
             return res.status(200).json(updatedProduct);
