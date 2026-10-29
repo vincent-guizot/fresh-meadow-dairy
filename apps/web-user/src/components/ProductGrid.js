@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, SlidersHorizontal, AlertCircle, RefreshCw } from 'lucide-react';
+import { SlidersHorizontal, AlertCircle } from 'lucide-react';
 import ProductCard from './ProductCard';
 import CategoryFilter from './CategoryFilter';
 import { fetchProducts } from '../services/api';
@@ -56,29 +56,29 @@ export default function ProductGrid() {
       <div className="space-y-6 mb-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-brand-700 text-xs font-bold uppercase tracking-wider mb-1">
-              <span>Farm Fresh Harvest</span>
+            <div className="flex items-center gap-2 text-fmd-green-600 text-xs font-bold uppercase tracking-wider mb-1">
+              <span>Hasil Panen Segar</span>
               <span>•</span>
-              <span>Daily Chilled Batches</span>
+              <span>Diperah & Dibotolkan Dingin</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-900 tracking-tight">
-              Our Dairy Selection
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-fmd-navy-700 tracking-tight">
+              Katalog Produk Susu & Olahan
             </h2>
           </div>
 
           {/* Sort Dropdown */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold text-gray-500 hidden sm:inline">Sort by:</span>
+            <span className="text-xs font-bold text-gray-500 hidden sm:inline">Urutkan:</span>
             <div className="relative">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-white text-xs sm:text-sm font-semibold text-brand-900 border border-cream-300 rounded-xl px-4 py-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-brand-600 cursor-pointer shadow-xs"
+                className="appearance-none bg-white text-xs sm:text-sm font-bold text-fmd-navy-700 border border-fmd-cream-300 rounded-2xl px-4 py-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-fmd-blue-500/30 cursor-pointer shadow-xs"
               >
-                <option value="featured">✨ Featured Selection</option>
-                <option value="price-low">💰 Price: Low to High</option>
-                <option value="price-high">💎 Price: High to Low</option>
-                <option value="rating">⭐ Customer Rating</option>
+                <option value="featured">✨ Pilihan Utama</option>
+                <option value="price-low">💰 Harga: Terendah ke Tertinggi</option>
+                <option value="price-high">💎 Harga: Tertinggi ke Terendah</option>
+                <option value="rating">⭐ Rating Tertinggi</option>
               </select>
               <SlidersHorizontal className="w-3.5 h-3.5 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -96,12 +96,12 @@ export default function ProductGrid() {
           {[...Array(8)].map((_, i) => (
             <div
               key={i}
-              className="bg-white rounded-2xl border border-cream-200 p-4 space-y-4 animate-pulse"
+              className="bg-white rounded-2xl border border-fmd-cream-300 p-4 space-y-4 animate-pulse shadow-xs"
             >
-              <div className="w-full h-48 bg-cream-200/70 rounded-xl" />
-              <div className="h-4 bg-cream-200/70 rounded w-1/3" />
-              <div className="h-5 bg-cream-200/70 rounded w-3/4" />
-              <div className="h-8 bg-cream-200/70 rounded-xl w-full" />
+              <div className="w-full h-48 bg-fmd-cream-200/80 rounded-xl" />
+              <div className="h-4 bg-fmd-cream-200/80 rounded w-1/3" />
+              <div className="h-5 bg-fmd-cream-200/80 rounded w-3/4" />
+              <div className="h-8 bg-fmd-cream-200/80 rounded-2xl w-full" />
             </div>
           ))}
         </div>
@@ -118,13 +118,13 @@ export default function ProductGrid() {
         </motion.div>
       ) : (
         /* Empty State */
-        <div className="bg-white rounded-3xl border border-cream-200 p-12 text-center max-w-md mx-auto space-y-4 shadow-sm">
-          <div className="w-14 h-14 rounded-2xl bg-cream-200 flex items-center justify-center mx-auto text-brand-700">
+        <div className="bg-white rounded-3xl border border-fmd-cream-300 p-12 text-center max-w-md mx-auto space-y-4 shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-fmd-cream-200 flex items-center justify-center mx-auto text-fmd-blue-500">
             <AlertCircle className="w-8 h-8" />
           </div>
-          <h3 className="font-serif font-bold text-xl text-brand-900">No Dairy Items Found</h3>
-          <p className="text-sm text-gray-500">
-            We couldn’t find anything matching &quot;{searchQuery}&quot; in the selected category.
+          <h3 className="font-serif font-bold text-xl text-fmd-navy-700">Produk Tidak Ditemukan</h3>
+          <p className="text-xs text-gray-500">
+            Tidak ada produk yang cocok dengan kata kunci &quot;{searchQuery}&quot; pada kategori yang dipilih.
           </p>
         </div>
       )}
